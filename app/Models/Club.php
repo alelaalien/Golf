@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Enums\ClubStatus;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Override;
 
 class Club extends Model
 {
+
+    use HasFactory;
 
     protected $table = "clubs";
    
@@ -31,7 +34,7 @@ class Club extends Model
         return [
 
             'status'        => ClubStatus::class,
-            'configuratios' => 'array'
+            'configuration' => 'array'
         ];
     }
 

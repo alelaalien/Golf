@@ -24,7 +24,7 @@ class ClubRequest extends FormRequest
     {
         return [
                     "name"          => ["required", "string", "max:250"], 
-                    "slug"          => ["required", "string", "unique:clubs, slug", "max:50"],
+                    "slug"          => ["sometimes", "required", "string", "unique:clubs, slug", "max:50"],
                     "email"         => ["required", "email", "unique:clubs,email "],
                     "phone"         => ["nullable", "string", "max:20"],
                     "status"        => ["nullable", "string", ""],

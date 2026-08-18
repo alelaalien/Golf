@@ -24,12 +24,15 @@ class PlayerRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route("player")?->id;
+
         return [
              
             'club_id'   => ["sometimes", 'required', 'exists:clubs,id'],
             "name"      => ["sometimes", "required", "string", "max:50"],
             "last_name" => ["sometimes", "required", "string", "max:50"],
-            "email"     => ["sometimes", "required", "email", "unique:players, email", "max:250"],
+            "email"     => ["sometimes", "required", "email", "max:250",
+                              Rule::unique("players", "email")->ignore($id)    ],
             "phone"     => ["nullable", "string", "max:50"],
             "handicap"  => ["nullable", "numeric", "between:-10.0, 54.0"],
             "status"    => ["nullable", Rule::enum(PlayerStatus::class)],
