@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Player;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PlayerService
 {
@@ -35,6 +35,11 @@ class PlayerService
                         $query->where("club_id", $whenParameter);
                 })
                 ->when($filters["name"]?? null,
+                function ($query, $whenParameter) 
+                {
+                    $query->where("name", $whenParameter);
+                })
+                ->when($filters["last_name"]?? null,
                 function ($query, $whenParameter) 
                 {
                     $query->where("last_name", $whenParameter);

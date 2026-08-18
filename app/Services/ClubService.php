@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
+use App\Enums\ClubStatus;
 use App\Models\Club;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
 class ClubService
@@ -56,6 +57,8 @@ class ClubService
                 ->when($filters["status"]?? null, 
                     function ($query, $whenParameter) 
                     {
+                        $enum = ClubStatus::tryFrom($whenParameter);
+                        if($enum)
                         $query->where("status", $whenParameter);
                     })
                 ->latest()

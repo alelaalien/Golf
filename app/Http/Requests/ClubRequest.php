@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ClubStatus;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ClubRequest extends FormRequest
 {
@@ -22,14 +24,26 @@ class ClubRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-                    "name"          => ["required", "string", "max:250"], 
-                    "slug"          => ["sometimes", "required", "string", "unique:clubs, slug", "max:50"],
-                    "email"         => ["required", "email", "unique:clubs,email "],
-                    "phone"         => ["nullable", "string", "max:20"],
-                    "status"        => ["nullable", "string", ""],
-                    "configuration" => ["nullable", "array"],
-                    "address"       => ["nullable", "string", "max:250"],
-        ];
+        $clubId = $this->route('club')?->id;
+       return [
+        "name"          => ["required", "string", "max:250"], 
+        "slug"          => [
+            "sometimes", 
+            "required", 
+            "string", 
+            "max:250",
+            Rule::unique('clubs', 'slug')->ignore($clubId)
+        ],
+        "email"         => [
+            "sometimes",
+            "required", 
+            "email", 
+            Rule::unique('clubs', 'email')->ignore($clubId)
+        ],
+        "phone"         => ["nullable", "string", "max:20"],
+        "status"        => ["nullable", Rule::enum(ClubStatus::class)],
+        "configuration" => ["nullable", "array"],
+        "address"       => ["nullable", "string", "max:250"],
+    ];
     }
 }

@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Player;
 use App\Models\Reservation;
-use Database\Factories\ReservationFactory; 
 use Illuminate\Database\Seeder;
 
 class ReservationSeeder extends Seeder

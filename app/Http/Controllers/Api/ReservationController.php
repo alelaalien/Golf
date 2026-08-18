@@ -25,7 +25,7 @@ class ReservationController extends Controller
 
     public function index( Request $request):AnonymousResourceCollection
     {
-        $perPage = $request->integer('per_page', 25);
+        $perPage = min($request->integer('perPage', 25), 100);
 
         $filters = $request->only(["status", "date", "club_id", "player_id"]);
         

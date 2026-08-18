@@ -25,9 +25,9 @@ class PlayerController extends Controller
 
     public function index(Request $request): AnonymousResourceCollection
     {
-        $perPages = $request->input("per_page", 25);
+        $perPage = min($request->integer("perPage", 25), 100);
         $filters = $request->only(["name", "last_name", "club_id"]);
-        $data = $this->service->getAll($filters, $perPages);
+        $data = $this->service->getAll($filters, $perPage);
 
         return  PlayerResource::collection($data);
     }

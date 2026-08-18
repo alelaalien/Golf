@@ -15,6 +15,7 @@ class ReservationResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [    
+                    "id"            =>  $this->id,
                     "club_id"       =>  $this->club_id,
                     "player_id"     =>  $this->player_id,
                     "date"          =>  $this->date,
