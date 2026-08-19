@@ -1,0 +1,821 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Golf Court Reservation API",
+        "description": "Documentación de la API para el sistema de reservas de canchas de golf.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1/api",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/clubs": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Obtener listado de clubs",
+                "description": "Retorna una lista paginada de clubs con filtros opcionales por nombre, estado y slug.",
+                "operationId": "getClubsList",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Cantidad de elementos por página (máximo 100)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 25
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filtrar por nombre del club",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filtrar por estado del club",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "slug",
+                        "in": "query",
+                        "description": "Filtrar por slug",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Crear un nuevo club",
+                "description": "Registra un nuevo club de golf en el sistema.",
+                "operationId": "storeClub",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Club de Golf Costa del Sol"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "club-de-golf-costa-del-sol"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "contacto@golfcostasol.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+34952123456"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "active"
+                                    },
+                                    "configuration": {
+                                        "type": "object",
+                                        "example": {
+                                            "courts_count": 9
+                                        }
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Carretera de Cádiz Km 204"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Club creado exitosamente"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/clubs/{club}": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Mostrar un club específico",
+                "description": "Retorna la información detallada de un club mediante su ID.",
+                "operationId": "getClubById",
+                "parameters": [
+                    {
+                        "name": "club",
+                        "in": "path",
+                        "description": "ID del club",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "Club no encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Actualizar un club existente",
+                "description": "Modifica los datos de un club existente. El campo 'name' es obligatorio.",
+                "operationId": "updateClub",
+                "parameters": [
+                    {
+                        "name": "club",
+                        "in": "path",
+                        "description": "ID del club",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Club Actualizado"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "nuevo@golfcostasol.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+34952999888"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "active"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Club actualizado con éxito"
+                    },
+                    "404": {
+                        "description": "Club no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Eliminar un club",
+                "description": "Elimina un club del sistema de forma lógica.",
+                "operationId": "deleteClub",
+                "parameters": [
+                    {
+                        "name": "club",
+                        "in": "path",
+                        "description": "ID del club",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Club eliminado exitosamente (sin contenido)"
+                    },
+                    "404": {
+                        "description": "Club no encontrado"
+                    }
+                }
+            }
+        },
+        "/clubs/{club}/slug": {
+            "patch": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Actualizar el slug de un club",
+                "description": "Modifica específicamente el slug de un club mediante una petición dedicada.",
+                "operationId": "updateClubSlug",
+                "parameters": [
+                    {
+                        "name": "club",
+                        "in": "path",
+                        "description": "ID del club",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "slug"
+                                ],
+                                "properties": {
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "nuevo-slug-personalizado"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Slug actualizado con éxito"
+                    },
+                    "422": {
+                        "description": "Error de validación o slug duplicado"
+                    }
+                }
+            }
+        },
+        "/players": {
+            "get": {
+                "tags": [
+                    "Players"
+                ],
+                "summary": "Obtener listado de jugadores",
+                "description": "Retorna una lista paginada de jugadores con filtros opcionales por nombre, apellido y club_id.",
+                "operationId": "getPlayersList",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Cantidad de elementos por página (máximo 100)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 25
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filtrar por nombre del jugador",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "last_name",
+                        "in": "query",
+                        "description": "Filtrar por apellido del jugador",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "club_id",
+                        "in": "query",
+                        "description": "Filtrar por ID del club asociado",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Players"
+                ],
+                "summary": "Crear un nuevo jugador",
+                "description": "Registra un nuevo jugador en el sistema asociado a un club.",
+                "operationId": "storePlayer",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "club_id",
+                                    "name",
+                                    "last_name",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "club_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Alejandra"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "Zepeda"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "alejandra@example.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+34600123456"
+                                    },
+                                    "handicap": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 12.5
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "active"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Jugador creado exitosamente"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/players/{player}": {
+            "get": {
+                "tags": [
+                    "Players"
+                ],
+                "summary": "Mostrar un jugador específico",
+                "description": "Retorna la información detallada de un jugador mediante su ID.",
+                "operationId": "getPlayerById",
+                "parameters": [
+                    {
+                        "name": "player",
+                        "in": "path",
+                        "description": "ID del jugador",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "Jugador no encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Players"
+                ],
+                "summary": "Actualizar un jugador existente",
+                "description": "Modifica los datos de un jugador existente.",
+                "operationId": "updatePlayer",
+                "parameters": [
+                    {
+                        "name": "player",
+                        "in": "path",
+                        "description": "ID del jugador",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "club_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Alejandra Actualizada"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "Zepeda"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+346667788"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "alejandra.nueva@example.com"
+                                    },
+                                    "handicap": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 10
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "active"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Jugador actualizado con éxito"
+                    },
+                    "404": {
+                        "description": "Jugador no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Players"
+                ],
+                "summary": "Eliminar un jugador",
+                "description": "Elimina un jugador del sistema.",
+                "operationId": "deletePlayer",
+                "parameters": [
+                    {
+                        "name": "player",
+                        "in": "path",
+                        "description": "ID del jugador",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Jugador eliminado exitosamente (sin contenido)"
+                    },
+                    "404": {
+                        "description": "Jugador no encontrado"
+                    }
+                }
+            }
+        },
+        "/reservations": {
+            "get": {
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Obtener listado de reservas",
+                "description": "Retorna una lista paginada de reservas con filtros opcionales por estado, fecha, club_id y player_id.",
+                "operationId": "getReservationsList",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Cantidad de elementos por página (máximo 100)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 25
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filtrar por estado de la reserva",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Filtrar por fecha (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "club_id",
+                        "in": "query",
+                        "description": "Filtrar por ID del club",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "player_id",
+                        "in": "query",
+                        "description": "Filtrar por ID del jugador",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Crear una nueva reserva",
+                "description": "Registra una nueva reserva de cancha de golf.",
+                "operationId": "storeReservation",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "club_id",
+                                    "player_id",
+                                    "date",
+                                    "start_time",
+                                    "end_time",
+                                    "players_count",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "club_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "player_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-08-26"
+                                    },
+                                    "start_time": {
+                                        "type": "string",
+                                        "example": "11:00"
+                                    },
+                                    "end_time": {
+                                        "type": "string",
+                                        "example": "13:00"
+                                    },
+                                    "players_count": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "pending"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Reserva creada exitosamente"
+                    },
+                    "422": {
+                        "description": "Error de validación (campos faltantes o con formato incorrecto)"
+                    },
+                    "409": {
+                        "description": "Conflicto de horario: ya existe una reserva que se solapa"
+                    }
+                }
+            }
+        },
+        "/reservations/{reservation}": {
+            "get": {
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Mostrar una reserva específica",
+                "description": "Retorna la información detallada de una reserva mediante su ID.",
+                "operationId": "getReservationById",
+                "parameters": [
+                    {
+                        "name": "reservation",
+                        "in": "path",
+                        "description": "ID de la reserva",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    },
+                    "404": {
+                        "description": "Reserva no encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Actualizar una reserva existente",
+                "description": "Modifica los datos de una reserva existente de forma parcial o total.",
+                "operationId": "updateReservation",
+                "parameters": [
+                    {
+                        "name": "reservation",
+                        "in": "path",
+                        "description": "ID de la reserva",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "club_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "player_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-08-26"
+                                    },
+                                    "start_time": {
+                                        "type": "string",
+                                        "example": "11:00"
+                                    },
+                                    "end_time": {
+                                        "type": "string",
+                                        "example": "13:00"
+                                    },
+                                    "players_count": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "confirmed"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Reserva actualizada con éxito"
+                    },
+                    "404": {
+                        "description": "Reserva no encontrada"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "409": {
+                        "description": "Conflicto de horario: ya existe otra reserva que se solapa"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Eliminar una reserva",
+                "description": "Elimina una reserva del sistema.",
+                "operationId": "deleteReservation",
+                "parameters": [
+                    {
+                        "name": "reservation",
+                        "in": "path",
+                        "description": "ID de la reserva",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Reserva eliminada exitosamente (sin contenido)"
+                    },
+                    "404": {
+                        "description": "Reserva no encontrada"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Clubs",
+            "description": "Clubs"
+        },
+        {
+            "name": "Players",
+            "description": "Players"
+        },
+        {
+            "name": "Reservations",
+            "description": "Reservations"
+        }
+    ]
+}

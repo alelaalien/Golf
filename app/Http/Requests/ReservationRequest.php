@@ -22,14 +22,16 @@ class ReservationRequest extends FormRequest
      */
     public function rules(): array
     {
+        $isUpdate = $this->route('reservation') !== null;
+
         return [
-                "player_id"         => ["required", "integer", "exists:players,id"],
-                "date"              => ["required", "date"],
-                "start_time"        => ["required", "date_format:H:i"],
-                "end_time"          => ["required", "date_format:H:i", "after:start_time"], 
-                "players_count"     => ["required", "integer", "min:1"],
-                "status"            => ["required", "string", "max:20"],
-                "club_id"           => ["required", "integer", "exists:clubs,id"],
+                "player_id"         => [$isUpdate ? 'sometimes' : 'required', "integer", "exists:players,id"],
+                "date"              => [$isUpdate ? 'sometimes' : 'required', "date"],
+                "start_time"        => [$isUpdate ? 'sometimes' : 'required', "date_format:H:i"],
+                "end_time"          => [$isUpdate ? 'sometimes' : 'required', "date_format:H:i", "after:start_time"], 
+                "players_count"     => [$isUpdate ? 'sometimes' : 'required', "integer", "min:1"],
+                "status"            => [$isUpdate ? 'sometimes' : 'required', "string", "max:20"],
+                "club_id"           => [$isUpdate ? 'sometimes' : 'required', "integer", "exists:clubs,id"],
         ];
     }
 }
